@@ -23,8 +23,8 @@ elif Laboratory_CODE == "ПЦР":
 elif Laboratory_CODE == None:
     pass
 
-print(f"Laboratory_CODE: {Laboratory_CODE}\n если 1 - ТМС\n2- ПЦР")
-time.sleep(5)
+print(f"Laboratory_CODE: {Laboratory_CODE}")
+input()
 if File is None:
     print("Не найден файл!")
     time.sleep(5)
@@ -191,59 +191,12 @@ for i in range(10):
                             current_element +
                             f" {Patients_Base.Code[i]}"
                         ))
-                        table_elements[j].find_element(By.CLASS_NAME, "triangle-down-m-solid").click()
-                        time.sleep(2)
-                        table = element.find_element(By.CLASS_NAME, "ant-dropdown-menu-vertical")
-                        table_elements = table.find_elements(By.CSS_SELECTOR, "li")
-                        table_elements[1].click()                                   #Нажимаем на ПЛИ
-                        time.sleep(3)
-                        shadow_root.append(shadow_root_open(shadow_root[2].find_element(By.CLASS_NAME, "iron-selected")))
-                        shadow_root.append(shadow_root_open(shadow_root[6].find_element(By.CLASS_NAME, "iron-selected")))
-                        shadow_root.append(shadow_root_open(shadow_root[7].find_element(By.CSS_SELECTOR, "react-external-forms")))
-                        shadow_root[8].find_element(By.ID, "neonatal-screening_labProfileCode").click()
-                        table = shadow_root[8].find_element(By.CLASS_NAME, "rc-virtual-list-holder-inner")
-                        table_elements = table.find_elements(By.CLASS_NAME, "ant-select-item")
-                        print(f"Выберется {Laboratory_CODE + 1} код лабораторного профиля")
-                        time.sleep(1)
-                        table_elements[Laboratory_CODE].click()
-                        time.sleep(0.4)
-                        shadow_root[8].find_element(By.CLASS_NAME, "justify-content-center").click()
-                        time.sleep(2)
-
-                        sticky_filter = shadow_root[8].find_element(By.CLASS_NAME, "sticky-filter")
-                        sticky_filter.find_element(By.CLASS_NAME, "ant-select-selection-search-input").click()
-                        table = sticky_filter.find_element(By.CLASS_NAME, "rc-virtual-list-holder-inner")
-                        table_elements = table.find_elements(By.CLASS_NAME, "ant-select-item")
-                        table_elements[0].click()
-                        table = sticky_filter.find_element(By.CLASS_NAME, "x6")
-                        interpreter = table.find_element(By.CLASS_NAME, "ant-select-selection-search-input")
-                        interpreter.send_keys("Нормальный (в пределах референсного диапазона)")
-                        interpreter.send_keys(Keys.ENTER)
-                        data_input = sticky_filter.find_element(By.CLASS_NAME, "ant-picker-input")
-                        data_input.find_element(By.CSS_SELECTOR, "input").send_keys(Patients_Base.date[i])
-                        time.sleep(1)
-                        time_table = sticky_filter.find_element(By.CLASS_NAME, "ant-picker-panel-container")
-                        time_table.find_element(By.CLASS_NAME, "ant-btn-primary").click()
-                        button = sticky_filter.find_element(By.CLASS_NAME, "btn-wrap")
-                        button.find_element(By.CSS_SELECTOR, "button").click()
-                        sticky_bottom = shadow_root[8].find_element(By.CLASS_NAME, "sticky-bottom")
-                        buttons = sticky_bottom.find_elements(By.CLASS_NAME, "ant-form-item-control")
-                        time.sleep(3)
-                        '''#buttons[1].click()
-                        shadow_root_exit = []
-                        time.sleep(6)
-                        shadow_root_exit.append(shadow_root_open(driver.find_element(By.CLASS_NAME, "nf-form-instance")))
-                        shadow_root_exit.append(shadow_root_open(shadow_root_exit[0].find_element(By.ID, "mainForm")))
-                        shadow_root_exit.append(shadow_root_open(shadow_root_exit[1].find_element(By.ID, "formManager")))
-                        shadow_root_exit.append(shadow_root_open(shadow_root_exit[2].find_element(By.CLASS_NAME, "iron-selected")))
-                        shadow_root_exit.append(shadow_root_open(shadow_root_exit[3].find_element(By.CLASS_NAME, "nf-form-instance")))
-                        shadow_root_exit.append(shadow_root_open(shadow_root_exit[4].find_element(By.CSS_SELECTOR, "react-external-forms")))
-                        sticky_bottom = shadow_root_exit[5].find_element(By.CLASS_NAME, "sticky-bottom")
-                        buttons = sticky_bottom.find_elements(By.CLASS_NAME, "btn-wrap")
-                        buttons[1].click()'''
-
-                        success_write(file_name=formatted_date, i=i)
-                        continue
+                        for l in range(len(table_elements_line)):
+                            current_element2 = table_elements_line[l].get_attribute('textContent')
+                            if str(Patients_Base.Code[i])[-10:] in current_element2:
+                                print()
+                                print("clicked")
+                                time.sleep(10)
 
     except Exception as e:
 
