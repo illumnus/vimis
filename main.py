@@ -157,7 +157,7 @@ for i in range(10):
             continue
         Code = str(Patients_Base.Code[i])[-10:]
         driver.get('https://vimis.egisz.rosminzdrav.ru/#patients_akineo.nns_list')
-        time.sleep(10)#10
+        time.sleep(10)
         shadow_root = []
         shadow_root.append(shadow_root_open(driver.find_element(By.CLASS_NAME, "nf-form-instance")))
         shadow_root.append(shadow_root_open(shadow_root[0].find_element(By.ID, "mainForm")))
@@ -229,7 +229,7 @@ for i in range(10):
                         sticky_bottom = shadow_root[8].find_element(By.CLASS_NAME, "sticky-bottom")
                         buttons = sticky_bottom.find_elements(By.CLASS_NAME, "ant-form-item-control")
                         time.sleep(3)
-                        '''#buttons[1].click()
+                        buttons[1].click()
                         shadow_root_exit = []
                         time.sleep(6)
                         shadow_root_exit.append(shadow_root_open(driver.find_element(By.CLASS_NAME, "nf-form-instance")))
@@ -240,7 +240,7 @@ for i in range(10):
                         shadow_root_exit.append(shadow_root_open(shadow_root_exit[4].find_element(By.CSS_SELECTOR, "react-external-forms")))
                         sticky_bottom = shadow_root_exit[5].find_element(By.CLASS_NAME, "sticky-bottom")
                         buttons = sticky_bottom.find_elements(By.CLASS_NAME, "btn-wrap")
-                        buttons[1].click()'''
+                        buttons[1].click()
 
                         success_write(file_name=formatted_date, i=i)
                         continue
