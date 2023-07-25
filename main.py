@@ -16,6 +16,13 @@ Patients_Base = Patients.Patients_base()
 # Проверяем наличие текстовых файлов, которые сгенерировал 1С в рабочей директории программы
 directory = "C:/результат/"  # рабочая директория программы по умолчанию для 1.0 версии программы
 File, Laboratory_CODE = Files_Work.get_text_file_paths(directory=directory)
+unsuccess = None
+if Laboratory_CODE == "ТМС_ВИМИС":
+    unsuccess = Files_Work.get_unsuccess(Laboratory_CODE)
+    Laboratory_CODE = 1
+elif Laboratory_CODE == "ПЦР_ВИМИС":
+    unsuccess = Files_Work.get_unsuccess(Laboratory_CODE)
+    Laboratory_CODE = 2
 if Laboratory_CODE == "ТМС":
     Laboratory_CODE = 1
 elif Laboratory_CODE == "ПЦР":
@@ -23,33 +30,51 @@ elif Laboratory_CODE == "ПЦР":
 elif Laboratory_CODE == None:
     pass
 
-print(f"Laboratory_CODE: {Laboratory_CODE}\n если 1 - ТМС\n2- ПЦР")
-time.sleep(5)
+print(f"Лабораторный код: {Laboratory_CODE}\nЕсли 1 - ТМС\n2- ПЦР")
+
 if File is None:
     print("Не найден файл!")
-    time.sleep(5)
     sys.exit()  # если файл не один или его нет - прекратить выполнение программы
 current_date = datetime.date.today()  # получаем сегодняшнюю дату
 formatted_date = current_date.strftime("%Y-%m-%d")  # формтируем год-месяц-день
-print(f"текущая дата: {formatted_date}") #получаем сегодняшнюю дату - для записи
+print(f"текущая дата: {formatted_date}")  # получаем сегодняшнюю дату - для записи
 print(File)
 
-
+Patients_VIMIS = Patients.Patients_base()
+if unsuccess is not None:
+    for i in range(len(unsuccess)):
+        Patients_VIMIS.add_volume(Number=None,
+                                  Code=unsuccess[i][0],
+                                  mom_FIO=None,
+                                  child_FIO=None,
+                                  uniqueNumber=None,
+                                  date=None,
+                                  birth_date=None,
+                                  take_time=None)
 with open(File, "r", encoding="UTF-8") as f:
     text = f.read().split("\n")
     for i in range(len(text)):
         text[i] = text[i].split(";")
-        if len(text[i]) == 8:  # Если чего-то не хватает, то пропускаем
+        if len(text[i]) == 9:  # Если чего-то не хватает, то пропускаем
+            if unsuccess is not None:
+                try:
+                    if int(text[i][1]) in Patients_VIMIS.Code:
+                        print(f"in unsuccess: {text[i][1]}")
+                        pass
+                    else:
+                        print(f"not in unsuccess: {text[i][1]}")
+                        continue
+                except:
+                    pass
             Patients_Base.add_volume(
                 Number=text[i][0],
                 Code=text[i][1],
-                mom_FIO=text[i][2],
-                child_FIO=text[i][3],
-                uniqueNumber=text[i][4],
-                date=text[i][5],
-                birth_date=text[i][6],
-                take_time=text[i][7])  # Добавляем пациентов во хранилище
-
+                date=text[i][2],
+                mom_FIO=text[i][3],
+                child_FIO=text[i][4],
+                uniqueNumber=text[i][5],
+                birth_date=text[i][7],
+                take_time=text[i][8])  # Добавляем пациентов во хранилище
 
 # Для открытия скрытых рутов
 def shadow_root_open(element):
@@ -59,7 +84,8 @@ def shadow_root_open(element):
     except Exception as e:
         traceback.print_exc()
 
-#Функция для записи ошибок
+
+# Функция для записи ошибок
 def error_write(file_name, i, message):
     try:
         os.mkdir(directory + "Errors")
@@ -81,7 +107,8 @@ def error_write(file_name, i, message):
         f.write(";")
         f.write(message)
 
-#Функция для записи успешных
+
+# Функция для записи успешных
 def success_write(file_name, i):
     try:
         os.mkdir(directory + "Success")
@@ -117,7 +144,6 @@ def success_write(file_name, i):
         f.write("\n")
 
 
-
 # Инициализируем брауер
 options = webdriver.ChromeOptions()
 options.add_argument("start-maximized")
@@ -134,11 +160,10 @@ stealth(driver,
         fix_hairline=True,
         )
 
-
-#пробуем попасть на вимис
+# пробуем попасть на вимис
 driver.get('https://vimis.egisz.rosminzdrav.ru/#patients_akineo.nns_list')
 time.sleep(10)
-#Ждем авторизации
+# Ждем авторизации
 while True:
     if "https://vimis.egisz.rosminzdrav.ru/" not in driver.current_url:
         time.sleep(1)
@@ -147,10 +172,9 @@ while True:
 
 time.sleep(1)
 
-#Проходим 10 пациентов - в качестве теста
-for i in range(10):
+for i in range(len(Patients_Base.Code)):
     try:
-        #проверяем длину штрихкода
+        # проверяем длину штрихкода
         if len(str(Patients_Base.Code[i])) != 19:
             print(len(str(Patients_Base.Code)))
             error_write(file_name=formatted_date, i=i, message="Штрих-код короче 19 символов")
@@ -163,7 +187,8 @@ for i in range(10):
         shadow_root.append(shadow_root_open(shadow_root[0].find_element(By.ID, "mainForm")))
         shadow_root.append(shadow_root_open(shadow_root[1].find_element(By.ID, "formManager")))
         shadow_root.append(shadow_root_open(shadow_root[2].find_element(By.CSS_SELECTOR, "nf-form-thread")))
-        shadow_root.append(shadow_root_open(shadow_root[3].find_element(By.CSS_SELECTOR, "nf-form-patients_akineo·nns_list")))
+        shadow_root.append(
+            shadow_root_open(shadow_root[3].find_element(By.CSS_SELECTOR, "nf-form-patients_akineo·nns_list")))
         shadow_root.append(shadow_root_open(shadow_root[4].find_element(By.CSS_SELECTOR, "nf-react-component")))
         element = shadow_root[5]
         print(Code)
@@ -195,11 +220,14 @@ for i in range(10):
                         time.sleep(2)
                         table = element.find_element(By.CLASS_NAME, "ant-dropdown-menu-vertical")
                         table_elements = table.find_elements(By.CSS_SELECTOR, "li")
-                        table_elements[1].click()                                   #Нажимаем на ПЛИ
+                        table_elements[1].click()  # Нажимаем на ПЛИ
                         time.sleep(3)
-                        shadow_root.append(shadow_root_open(shadow_root[2].find_element(By.CLASS_NAME, "iron-selected")))
-                        shadow_root.append(shadow_root_open(shadow_root[6].find_element(By.CLASS_NAME, "iron-selected")))
-                        shadow_root.append(shadow_root_open(shadow_root[7].find_element(By.CSS_SELECTOR, "react-external-forms")))
+                        shadow_root.append(
+                            shadow_root_open(shadow_root[2].find_element(By.CLASS_NAME, "iron-selected")))
+                        shadow_root.append(
+                            shadow_root_open(shadow_root[6].find_element(By.CLASS_NAME, "iron-selected")))
+                        shadow_root.append(
+                            shadow_root_open(shadow_root[7].find_element(By.CSS_SELECTOR, "react-external-forms")))
                         shadow_root[8].find_element(By.ID, "neonatal-screening_labProfileCode").click()
                         table = shadow_root[8].find_element(By.CLASS_NAME, "rc-virtual-list-holder-inner")
                         table_elements = table.find_elements(By.CLASS_NAME, "ant-select-item")
@@ -232,12 +260,17 @@ for i in range(10):
                         buttons[1].click()
                         shadow_root_exit = []
                         time.sleep(6)
-                        shadow_root_exit.append(shadow_root_open(driver.find_element(By.CLASS_NAME, "nf-form-instance")))
+                        shadow_root_exit.append(
+                            shadow_root_open(driver.find_element(By.CLASS_NAME, "nf-form-instance")))
                         shadow_root_exit.append(shadow_root_open(shadow_root_exit[0].find_element(By.ID, "mainForm")))
-                        shadow_root_exit.append(shadow_root_open(shadow_root_exit[1].find_element(By.ID, "formManager")))
-                        shadow_root_exit.append(shadow_root_open(shadow_root_exit[2].find_element(By.CLASS_NAME, "iron-selected")))
-                        shadow_root_exit.append(shadow_root_open(shadow_root_exit[3].find_element(By.CLASS_NAME, "nf-form-instance")))
-                        shadow_root_exit.append(shadow_root_open(shadow_root_exit[4].find_element(By.CSS_SELECTOR, "react-external-forms")))
+                        shadow_root_exit.append(
+                            shadow_root_open(shadow_root_exit[1].find_element(By.ID, "formManager")))
+                        shadow_root_exit.append(
+                            shadow_root_open(shadow_root_exit[2].find_element(By.CLASS_NAME, "iron-selected")))
+                        shadow_root_exit.append(
+                            shadow_root_open(shadow_root_exit[3].find_element(By.CLASS_NAME, "nf-form-instance")))
+                        shadow_root_exit.append(
+                            shadow_root_open(shadow_root_exit[4].find_element(By.CSS_SELECTOR, "react-external-forms")))
                         sticky_bottom = shadow_root_exit[5].find_element(By.CLASS_NAME, "sticky-bottom")
                         buttons = sticky_bottom.find_elements(By.CLASS_NAME, "btn-wrap")
                         buttons[1].click()
@@ -245,8 +278,7 @@ for i in range(10):
                         success_write(file_name=formatted_date, i=i)
                         continue
 
-    except Exception as e:
-
+    except:
         # Get the traceback as a string
         traceback_str = traceback.format_exc()
 

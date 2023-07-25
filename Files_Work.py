@@ -14,5 +14,22 @@ def get_text_file_paths(directory):
             return text_file_paths[0][0], "ПЦР"
         elif text_file_paths[0][1] == "ТМС.txt":
             return text_file_paths[0][0], "ТМС"
+        elif text_file_paths[0][1] == "ПЦР_ВИМИС.txt":
+            return text_file_paths[0][0], "ПЦР_ВИМИС"
+        elif text_file_paths[0][1] == "ТМС_ВИМИС.txt":
+            return text_file_paths[0][0], "ТМС_ВИМИС"
     else:
         return None, None
+
+def get_unsuccess(Laboratory_CODE):
+
+    if Laboratory_CODE == "ТМС_ВИМИС":
+        file_path = "Files/TMC_unsuccess.txt"
+    elif Laboratory_CODE == "ПЦР_ВИМИС":
+        file_path = "Files/MGI_unsuccess.txt"
+
+    with open(file_path, "r") as f:
+        text = f.read().split("\n")
+        for i in range(len(text)):
+            text[i] = text[i].split("\t")
+        return text
