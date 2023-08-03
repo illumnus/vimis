@@ -210,12 +210,25 @@ for i in range(len(Patients_Base.Code)):
                 table_elements_line = table_elements[j].find_elements(By.CSS_SELECTOR, "td")
                 for k in range(len(table_elements_line)):
                     current_element = table_elements_line[k].get_attribute('textContent')
+                    PLI = None
                     if current_element == str(Patients_Base.Code[i]):
                         print(str(
                             f"Найдено совпадение по штрих-коду:\n" +
                             current_element +
                             f" {Patients_Base.Code[i]}"
                         ))
+                        PLI = True
+                    MSR = str(Patients_Base.uniqueNumber[i])[:2] + " " + str(Patients_Base.uniqueNumber[i])[2:]
+                    print(MSR)
+                    if current_element == MSR:
+                        print(str(
+                            f"Найдено совпадение по МСР:\n" +
+                            current_element +
+                            f" {Patients_Base.Code[i]}"
+                        ))
+                        PLI = True
+                    if PLI is True:
+
                         table_elements[j].find_element(By.CLASS_NAME, "triangle-down-m-solid").click()
                         time.sleep(2)
                         table = element.find_element(By.CLASS_NAME, "ant-dropdown-menu-vertical")
@@ -277,6 +290,8 @@ for i in range(len(Patients_Base.Code)):
 
                         success_write(file_name=formatted_date, i=i)
                         continue
+                    else:
+                        error_write(file_name=formatted_date, i=i, message="Не найдено направление")
 
     except:
         # Get the traceback as a string
