@@ -1,14 +1,15 @@
 import os
 import sys
+import traceback
+
+from selenium.webdriver import Keys
+from selenium.webdriver.common.by import By
+from selenium.webdriver.firefox import webdriver
+
 import Files_Work
 import Patients
 import datetime
-from selenium.webdriver.common.by import By
-from selenium import webdriver
-from selenium_stealth import stealth
-import traceback
 import time
-from selenium.webdriver.common.keys import Keys
 
 # Создаем пустую базу добавляемых пациентов
 Patients_Base = Patients.Patients_base()
@@ -150,15 +151,6 @@ options.add_argument("start-maximized")
 options.add_experimental_option("excludeSwitches", ["enable-automation"])
 options.add_experimental_option('useAutomationExtension', False)
 driver = webdriver.Chrome(options=options)
-# Для скрытности
-stealth(driver,
-        languages=["en-US", "en"],
-        vendor="Google Inc.",
-        platform="Win32",
-        webgl_vendor="Intel Inc.",
-        renderer="Intel Iris OpenGL Engine",
-        fix_hairline=True,
-        )
 
 # пробуем попасть на вимис
 driver.get('https://vimis.egisz.rosminzdrav.ru/#patients_akineo.nns_list')

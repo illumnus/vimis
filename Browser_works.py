@@ -18,8 +18,9 @@ class On_vimis_work:
         self.by_list = [By.ID, By.CSS_SELECTOR, By.CLASS_NAME]
         self.shadow_root = []
         self.Codes = []
-        self.PCR_index = None
-        self.BH_index = None
+        self.Dates = []
+        self.investigation = None
+        self.investigation_index = None
 
     def shadow_root_open(self, element):
         try:
@@ -52,7 +53,6 @@ class On_vimis_work:
                                                                         "abstract-request-information__text")
                 if "2 цифры номера" in abstract_request_information.text:
                     self.driver.find_element(By.CLASS_NAME, "input__field").send_keys("87")
-                self.driver.find_element(By.CLASS_NAME, "anomaly__button").click()
                 break
             except:
                 time.sleep(1)
@@ -107,10 +107,12 @@ class On_vimis_work:
                 table_head_elements = table_head.find_elements(By.CSS_SELECTOR, "th")
                 for i in range(len(table_head_elements)):
                     if table_head_elements[i].find_element(By.CSS_SELECTOR, "p").text == "Дата результата МГИ":
-                        self.PCR_index = i
+                        if self.investigation == "PCR":
+                            self.investigation_index = i
                     elif table_head_elements[i].find_element(By.CSS_SELECTOR, "p").text == "Дата результата ТМС":
-                        self.BH_index = i
-                print(f"self.PCR_index: {self.PCR_index}, self.BH_index: {self.BH_index}")
+                        if self.investigation == "BH":
+                            self.investigation_index = i
+                print(f"self.PCR_index: {self.investigation_index}, self.BH_index: {self.investigation_index}")
                 return
             except:
                 time.sleep(1)
@@ -121,16 +123,16 @@ class On_vimis_work:
             try:
                 table = root.find_element(By.CLASS_NAME, "ant-table-tbody")
                 lines = table.find_elements(By.CLASS_NAME, "ant-table-row-level-0")
-                for j in range(len(lines)):
-                    rows = lines[j].find_elements(By.CLASS_NAME, "ant-table-cell")
-                    text = ""
-                    for k in range(len(rows)):
-                        text = text + f"{k}:{rows[k].text}\t"
-                    print(text)
+                if len(lines) == 1:
+                    rows = lines[0].find_elements(By.CLASS_NAME, "ant-table-cell")
+                    if rows[self.investigation_index].text == "":
+                        return True
+                    else:
+                        return False
             except:
                 try:
                     root.find_element(By.CLASS_NAME, "empty-data-table")
-                    return False
+                    return "NotFound"
                 except:
                     time.sleep(1)
 
@@ -144,6 +146,119 @@ class On_vimis_work:
         input_field.send_keys(self.Codes[i])
         self.driver.find_element(By.CLASS_NAME, "ant-btn-primary").click()
 
+    def PLI_click(self):
+        for i in range(15):
+            try:
+                root = self.shadow_root[5]
+                table = root.find_element(By.CLASS_NAME, "ant-table-tbody")
+                lines = table.find_elements(By.CLASS_NAME, "ant-table-row-level-0")
+                if len(lines) == 1:
+                    rows = lines[0].find_elements(By.CLASS_NAME, "ant-table-cell")
+                    rows[0].find_element(By.CLASS_NAME, "triangle-down-m-solid").click()
+                    time.sleep(1)
+                    table = root.find_element(By.CLASS_NAME, "ant-dropdown-menu-vertical")
+                    table_elements = table.find_elements(By.CSS_SELECTOR, "li")
+                    table_elements[1].click()
+            except:
+                time.sleep(1)
+
+    def PLI_shadow_root_open(self):
+        for i in range(15):
+            if len(self.shadow_root) < 9:
+                try:
+                    self.shadow_root.append(
+                        self.shadow_root_open(self.shadow_root[2].find_element(By.CLASS_NAME, "iron-selected")))
+                    self.shadow_root.append(
+                        self.shadow_root_open(self.shadow_root[6].find_element(By.CLASS_NAME, "iron-selected")))
+                    self.shadow_root.append(
+                        self.shadow_root_open(self.shadow_root[7].find_element(By.CSS_SELECTOR, "react-external-forms")))
+                    return
+                except:
+                    time.sleep(1)
+
+    def click_on_investigation_CODE(self):
+        for i in range(15):
+            try:
+                root = self.shadow_root[8]
+                root.find_element(By.ID, "neonatal-screening_labProfileCode").click()
+                table = self.shadow_root[8].find_element(By.CLASS_NAME, "rc-virtual-list-holder-inner")
+                table_elements = table.find_elements(By.CLASS_NAME, "ant-select-item")
+                time.sleep(1)
+                if self.investigation == "PCR":
+                    table_elements[2].click()
+                elif self.investigation == "BH":
+                    table_elements[2].click()
+                return
+            except:
+                time.sleep(1)
+
+    def fill_the_normal(self, i):
+        stages = [False for i in range(5)]
+        for i in range(15):
+            try:
+                root = self.shadow_root[8]
+                if stages[0] is False:
+                    root.find_element(By.CLASS_NAME, "justify-content   -center").click()
+                    stages[0] = True
+                if stages[1] is False:
+                    sticky_filter = root.find_element(By.CLASS_NAME, "sticky-filter")
+                    sticky_filter.find_element(By.CLASS_NAME, "ant-select-selection-search-input").click()
+                    table = sticky_filter.find_element(By.CLASS_NAME, "rc-virtual-list-holder-inner")
+                    table_elements = table.find_elements(By.CLASS_NAME, "ant-select-item")
+                    table_elements[0].click()
+                    stages[1] = True
+                if stages[2] is False:
+                    table = sticky_filter.find_element(By.CLASS_NAME, "x6")
+                    interpreter = table.find_element(By.CLASS_NAME, "ant-select-selection-search-input")
+                    interpreter.send_keys("Нормальный (в пределах референсного диапазона)")
+                    interpreter.send_keys(Keys.ENTER)
+                    stages[2] = True
+                if stages[3] is False:
+                    data_input = sticky_filter.find_element(By.CLASS_NAME, "ant-picker-input")
+                    data_input.find_element(By.CSS_SELECTOR, "input").send_keys(self.Dates[i])
+                    time_table = sticky_filter.find_element(By.CLASS_NAME, "ant-picker-panel-container")
+                    time_table.find_element(By.CLASS_NAME, "ant-btn-primary").click()
+                    stages[3] = True
+                if stages[4] is False:
+                    button = sticky_filter.find_element(By.CLASS_NAME, "btn-wrap")
+                    button.find_element(By.CSS_SELECTOR, "button").click()
+                    stages[4] = True
+            except:
+                time.sleep(1)
+
+    def submit_the_normal(self):
+        for i in range(15):
+            try:
+                root = self.shadow_root[8]
+                sticky_bottom = root.find_element(By.CLASS_NAME, "sticky-bottom")
+                buttons = sticky_bottom.find_elements(By.CLASS_NAME, "ant-form-item-control")
+                time.sleep(3)
+                buttons[1].click()
+            except:
+                time.sleep(1)
+
+    def exit_the_normal(self):
+        for i in range(20):
+            try:
+                shadow_root_exit = []
+                time.sleep(6)
+                shadow_root_exit.append(
+                    self.shadow_root_open(self.driver.find_element(By.CLASS_NAME, "nf-form-instance")))
+                shadow_root_exit.append(self.shadow_root_open(shadow_root_exit[0].find_element(By.ID, "mainForm")))
+                shadow_root_exit.append(
+                    self.shadow_root_open(shadow_root_exit[1].find_element(By.ID, "formManager")))
+                shadow_root_exit.append(
+                    self.shadow_root_open(shadow_root_exit[2].find_element(By.CLASS_NAME, "iron-selected")))
+                shadow_root_exit.append(
+                    self.shadow_root_open(shadow_root_exit[3].find_element(By.CLASS_NAME, "nf-form-instance")))
+                shadow_root_exit.append(
+                    self.shadow_root_open(shadow_root_exit[4].find_element(By.CSS_SELECTOR, "react-external-forms")))
+                sticky_bottom = shadow_root_exit[5].find_element(By.CLASS_NAME, "sticky-bottom")
+                buttons = sticky_bottom.find_elements(By.CLASS_NAME, "btn-wrap")
+                buttons[1].click()
+            except:
+                time.sleep(1)
+
 
 if __name__ == "__main__":
     simple = On_vimis_work()
@@ -151,5 +266,12 @@ if __name__ == "__main__":
     simple.open_shadow_roots_on_main_list()
     simple.all_fields_on()
     simple.find_index_of_investigation()
-    simple.check_if_investigation_exists()
+
+    result = simple.check_if_investigation_exists()
+    if result is True:
+        pass
+    elif result is False:
+        pass
+    elif result == "NotFound":
+        pass
     input()
