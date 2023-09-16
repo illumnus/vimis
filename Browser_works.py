@@ -193,7 +193,7 @@ class On_vimis_work:
                 if self.investigation == "PCR":
                     table_elements[2].click()
                 elif self.investigation == "BH":
-                    table_elements[2].click()
+                    table_elements[1].click()
                 return
             except:
                 time.sleep(1)
