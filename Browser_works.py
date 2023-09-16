@@ -94,7 +94,10 @@ class On_vimis_work:
                 root_table = root.find_element(By.CLASS_NAME, "root-table")
                 tco_top_wrapper = root_table.find_element(By.CLASS_NAME, "tco-top")
                 switch = tco_top_wrapper.find_element(By.CLASS_NAME, "root-switch")
-                switch.click()
+                switch_state = switch.find_element(By.CLASS_NAME, "ant-switch")
+                #print(f"switch_state{switch_state.get_attribute('aria-checked')}")
+                if switch_state.get_attribute("aria-checked") == "false":
+                    switch.click()
                 return
             except:
                 time.sleep(1)
@@ -112,39 +115,41 @@ class On_vimis_work:
                     elif table_head_elements[i].find_element(By.CSS_SELECTOR, "p").text == "Дата результата ТМС":
                         if self.investigation == "BH":
                             self.investigation_index = i
-                print(f"self.PCR_index: {self.investigation_index}, self.BH_index: {self.investigation_index}")
                 return
             except:
                 time.sleep(1)
 
     def check_if_investigation_exists(self):
+        time.sleep(5)
         root = self.shadow_root[5]
         for i in range(15):
             try:
                 table = root.find_element(By.CLASS_NAME, "ant-table-tbody")
                 lines = table.find_elements(By.CLASS_NAME, "ant-table-row-level-0")
-                if len(lines) == 1:
-                    rows = lines[0].find_elements(By.CLASS_NAME, "ant-table-cell")
-                    if rows[self.investigation_index].text == "":
-                        return True
-                    else:
-                        return False
-            except:
-                try:
+                if len(lines) == 0:
                     root.find_element(By.CLASS_NAME, "empty-data-table")
                     return "NotFound"
-                except:
-                    time.sleep(1)
+                rows = lines[0].find_elements(By.CLASS_NAME, "ant-table-cell")
+                if rows[self.investigation_index].text == "":
+                    return True
+                else:
+                    return False
+            except:
+                time.sleep(1)
 
     def find_patient(self, i):
-        element = self.shadow_root[5]
-        print(i)
-        input_field = element.find_element(By.ID, "neoScreeningTopFilterNew_extNumber")
-        for t in range(25):
-            input_field.send_keys(Keys.BACKSPACE)
-            break
-        input_field.send_keys(self.Codes[i])
-        self.driver.find_element(By.CLASS_NAME, "ant-btn-primary").click()
+        for j in range(15):
+            try:
+                element = self.shadow_root[5]
+                #print(i)
+                input_field = element.find_element(By.ID, "neoScreeningTopFilterNew_extNumber")
+                for t in range(35):
+                    input_field.send_keys(Keys.BACKSPACE)
+                input_field.send_keys(self.Codes[i])
+                element.find_element(By.CLASS_NAME, "ant-btn-primary").click()
+                return
+            except:
+                time.sleep(1)
 
     def PLI_click(self):
         for i in range(15):
@@ -159,29 +164,30 @@ class On_vimis_work:
                     table = root.find_element(By.CLASS_NAME, "ant-dropdown-menu-vertical")
                     table_elements = table.find_elements(By.CSS_SELECTOR, "li")
                     table_elements[1].click()
+                    return
             except:
                 time.sleep(1)
 
     def PLI_shadow_root_open(self):
         for i in range(15):
-            if len(self.shadow_root) < 9:
-                try:
-                    self.shadow_root.append(
-                        self.shadow_root_open(self.shadow_root[2].find_element(By.CLASS_NAME, "iron-selected")))
-                    self.shadow_root.append(
-                        self.shadow_root_open(self.shadow_root[6].find_element(By.CLASS_NAME, "iron-selected")))
-                    self.shadow_root.append(
-                        self.shadow_root_open(self.shadow_root[7].find_element(By.CSS_SELECTOR, "react-external-forms")))
-                    return
-                except:
-                    time.sleep(1)
+            try:
+                self.shadow_root.append(
+                    self.shadow_root_open(self.shadow_root[2].find_element(By.CLASS_NAME, "iron-selected")))
+                self.shadow_root.append(
+                    self.shadow_root_open(self.shadow_root[7].find_element(By.CLASS_NAME, "iron-selected")))
+                self.shadow_root.append(
+                    self.shadow_root_open(self.shadow_root[8].find_element(By.CSS_SELECTOR, "react-external-forms")))
+                return
+            except Exception as e:
+                print(e)
+                time.sleep(1)
 
     def click_on_investigation_CODE(self):
         for i in range(15):
             try:
-                root = self.shadow_root[8]
+                root = self.shadow_root[9]
                 root.find_element(By.ID, "neonatal-screening_labProfileCode").click()
-                table = self.shadow_root[8].find_element(By.CLASS_NAME, "rc-virtual-list-holder-inner")
+                table = root.find_element(By.CLASS_NAME, "rc-virtual-list-holder-inner")
                 table_elements = table.find_elements(By.CLASS_NAME, "ant-select-item")
                 time.sleep(1)
                 if self.investigation == "PCR":
@@ -194,11 +200,12 @@ class On_vimis_work:
 
     def fill_the_normal(self, i):
         stages = [False for i in range(5)]
-        for i in range(15):
+        for j in range(15):
+            print(stages)
             try:
-                root = self.shadow_root[8]
+                root = self.shadow_root[9]
                 if stages[0] is False:
-                    root.find_element(By.CLASS_NAME, "justify-content   -center").click()
+                    root.find_element(By.CLASS_NAME, "justify-content-center").click()
                     stages[0] = True
                 if stages[1] is False:
                     sticky_filter = root.find_element(By.CLASS_NAME, "sticky-filter")
@@ -223,17 +230,22 @@ class On_vimis_work:
                     button = sticky_filter.find_element(By.CLASS_NAME, "btn-wrap")
                     button.find_element(By.CSS_SELECTOR, "button").click()
                     stages[4] = True
-            except:
+                print("fill_the_normal success")
+                return
+            except Exception as e:
+                print(e)
                 time.sleep(1)
 
     def submit_the_normal(self):
         for i in range(15):
             try:
-                root = self.shadow_root[8]
+                root = self.shadow_root[9]
                 sticky_bottom = root.find_element(By.CLASS_NAME, "sticky-bottom")
                 buttons = sticky_bottom.find_elements(By.CLASS_NAME, "ant-form-item-control")
                 time.sleep(3)
                 buttons[1].click()
+                print("submit_the_normal success")
+                return
             except:
                 time.sleep(1)
 
@@ -256,6 +268,8 @@ class On_vimis_work:
                 sticky_bottom = shadow_root_exit[5].find_element(By.CLASS_NAME, "sticky-bottom")
                 buttons = sticky_bottom.find_elements(By.CLASS_NAME, "btn-wrap")
                 buttons[1].click()
+                print("exit_the_normal success")
+                return
             except:
                 time.sleep(1)
 
