@@ -161,6 +161,7 @@ def cycle(i):
         main_browser.submit_the_normal()
         main_browser.exit_the_normal()
         success_write(file_name=formatted_date, i=i)
+        print(f"Для {Patients_Base.Code[i]} успешно создана запись")
         return
     elif result is not True:
         print(f"Для {Patients_Base.Code[i]} уже имеется запись от {result}")

@@ -3,7 +3,6 @@ import time
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
-from chromedriver_py import binary_path  # this will get you the path variable
 import traceback
 
 
@@ -13,8 +12,7 @@ class On_vimis_work:
         options.add_argument("start-maximized")
         options.add_experimental_option("excludeSwitches", ["enable-automation"])
         options.add_experimental_option('useAutomationExtension', False)
-        svc = webdriver.ChromeService(executable_path=binary_path)
-        self.driver = webdriver.Chrome(options=options, service=svc)
+        self.driver = webdriver.Chrome(options=options)
         self.by_list = [By.ID, By.CSS_SELECTOR, By.CLASS_NAME]
         self.shadow_root = []
         self.Codes = []
@@ -231,7 +229,6 @@ class On_vimis_work:
                     button = sticky_filter.find_element(By.CLASS_NAME, "btn-wrap")
                     button.find_element(By.CSS_SELECTOR, "button").click()
                     stages[4] = True
-                print("fill_the_normal success")
                 return
             except Exception as e:
                 print(e)
@@ -245,7 +242,6 @@ class On_vimis_work:
                 buttons = sticky_bottom.find_elements(By.CLASS_NAME, "ant-form-item-control")
                 time.sleep(3)
                 buttons[1].click()
-                print("submit_the_normal success")
                 return
             except:
                 time.sleep(1)
@@ -269,10 +265,11 @@ class On_vimis_work:
                 sticky_bottom = shadow_root_exit[5].find_element(By.CLASS_NAME, "sticky-bottom")
                 buttons = sticky_bottom.find_elements(By.CLASS_NAME, "btn-wrap")
                 buttons[1].click()
-                print("exit_the_normal success")
                 return
             except:
                 time.sleep(1)
+        self.driver.get('https://vimis.egisz.rosminzdrav.ru/#patients_akineo.nns_list')
+        self.open_shadow_roots_on_main_list()
 
 
 if __name__ == "__main__":
