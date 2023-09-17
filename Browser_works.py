@@ -125,17 +125,18 @@ class On_vimis_work:
         for i in range(15):
             try:
                 table = root.find_element(By.CLASS_NAME, "ant-table-tbody")
-                lines = table.find_elements(By.CLASS_NAME, "ant-table-row-level-0")
-                if len(lines) == 0:
-                    root.find_element(By.CLASS_NAME, "empty-data-table")
-                    return "NotFound"
-                rows = lines[0].find_elements(By.CLASS_NAME, "ant-table-cell")
+                line = table.find_element(By.CLASS_NAME, "ant-table-row-level-0")
+                rows = line.find_elements(By.CLASS_NAME, "ant-table-cell")
                 if rows[self.investigation_index].text == "":
                     return True
                 else:
-                    return False
+                    return rows[self.investigation_index].text
             except:
-                time.sleep(1)
+                try:
+                    root.find_element(By.CLASS_NAME, "empty-data-table")
+                    return "NotFound"
+                except:
+                    time.sleep(1)
 
     def find_patient(self, i):
         for j in range(15):
