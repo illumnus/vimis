@@ -39,8 +39,8 @@ class On_vimis_work:
                 time.sleep(2)
         for i in range(2):
             try:
-                self.driver.find_element(By.ID, "login").send_keys("")
-                self.driver.find_element(By.ID, "password").send_keys("")
+                self.driver.find_element(By.ID, "login").send_keys("89899557610")
+                self.driver.find_element(By.ID, "password").send_keys("Qn:e~SS1l4")
                 self.driver.find_element(By.CLASS_NAME, "plain-button_wide").click()
                 break
             except:
@@ -178,6 +178,7 @@ class On_vimis_work:
                     self.shadow_root_open(self.shadow_root[8].find_element(By.CSS_SELECTOR, "react-external-forms")))
                 return
             except Exception as e:
+                print(e)
                 time.sleep(1)
 
     def click_on_investigation_CODE(self):
@@ -199,6 +200,7 @@ class On_vimis_work:
     def fill_the_normal(self, i):
         stages = [False for i in range(5)]
         for j in range(15):
+            print(stages)
             try:
                 root = self.shadow_root[9]
                 if stages[0] is False:
@@ -227,6 +229,7 @@ class On_vimis_work:
                     button = sticky_filter.find_element(By.CLASS_NAME, "btn-wrap")
                     button.find_element(By.CSS_SELECTOR, "button").click()
                     stages[4] = True
+                print("fill_the_normal success")
                 return
             except Exception as e:
                 print(e)
@@ -240,6 +243,7 @@ class On_vimis_work:
                 buttons = sticky_bottom.find_elements(By.CLASS_NAME, "ant-form-item-control")
                 time.sleep(3)
                 buttons[1].click()
+                print("submit_the_normal success")
                 return
             except:
                 time.sleep(1)
@@ -263,11 +267,10 @@ class On_vimis_work:
                 sticky_bottom = shadow_root_exit[5].find_element(By.CLASS_NAME, "sticky-bottom")
                 buttons = sticky_bottom.find_elements(By.CLASS_NAME, "btn-wrap")
                 buttons[1].click()
+                print("exit_the_normal success")
                 return
             except:
                 time.sleep(1)
-        self.driver.get('https://vimis.egisz.rosminzdrav.ru/#patients_akineo.nns_list')
-        self.open_shadow_roots_on_main_list()
 
 
 if __name__ == "__main__":

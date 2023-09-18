@@ -136,6 +136,8 @@ def success_write(file_name, i):
 main_browser = Browser_works.On_vimis_work()
 main_browser.Dates = Patients_Base.date
 main_browser.Codes = Patients_Base.Code
+for i in range(len(main_browser.Dates)):
+    print(f"{i}: {main_browser.Dates[i]}\t{main_browser.Codes[i]}")
 main_browser.driver.get('https://vimis.egisz.rosminzdrav.ru/#patients_akineo.nns_list')
 if Laboratory_CODE == 1:
     main_browser.investigation = "BH"
@@ -151,6 +153,7 @@ while True:
         break
 
 def cycle(i):
+
     if len(str(main_browser.Codes[i])) != 19:
         print(f"длина штрихкода {Patients_Base.Code[i]} не равна 19 символам! Пропускаю........")
         return
