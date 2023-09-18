@@ -39,8 +39,8 @@ class On_vimis_work:
                 time.sleep(2)
         for i in range(2):
             try:
-                self.driver.find_element(By.ID, "login").send_keys("89899557610")
-                self.driver.find_element(By.ID, "password").send_keys("Qn:e~SS1l4")
+                self.driver.find_element(By.ID, "login").send_keys("")
+                self.driver.find_element(By.ID, "password").send_keys("")
                 self.driver.find_element(By.CLASS_NAME, "plain-button_wide").click()
                 break
             except:

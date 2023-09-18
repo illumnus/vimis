@@ -1,5 +1,6 @@
 import os
 import sys
+import time
 
 import Browser_works
 import Files_Work
@@ -135,12 +136,19 @@ def success_write(file_name, i):
 main_browser = Browser_works.On_vimis_work()
 main_browser.Dates = Patients_Base.date
 main_browser.Codes = Patients_Base.Code
+main_browser.driver.get('https://vimis.egisz.rosminzdrav.ru/#patients_akineo.nns_list')
 if Laboratory_CODE == 1:
     main_browser.investigation = "BH"
 elif Laboratory_CODE == 2:
     main_browser.investigation = "PCR"
-main_browser.VIMIS_login()
+#main_browser.VIMIS_login()
 
+while True:
+    print("ожидание перехода на сайт")
+    time.sleep(5)
+    if "https://vimis.egisz.rosminzdrav.ru/#patients_akineo.nns_list" == main_browser.driver.current_url:
+        print("Вы перешли на сайт. Начинаю работу.......")
+        break
 
 def cycle(i):
     if len(str(main_browser.Codes[i])) != 19:
@@ -156,8 +164,6 @@ def cycle(i):
         main_browser.PLI_shadow_root_open()
         main_browser.click_on_investigation_CODE()
         main_browser.fill_the_normal(i=i)
-        print("Continue?")
-        input()
         main_browser.submit_the_normal()
         main_browser.exit_the_normal()
         success_write(file_name=formatted_date, i=i)
