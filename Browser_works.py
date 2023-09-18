@@ -178,7 +178,6 @@ class On_vimis_work:
                     self.shadow_root_open(self.shadow_root[8].find_element(By.CSS_SELECTOR, "react-external-forms")))
                 return
             except Exception as e:
-                print(e)
                 time.sleep(1)
 
     def click_on_investigation_CODE(self):
@@ -200,7 +199,6 @@ class On_vimis_work:
     def fill_the_normal(self, i):
         stages = [False for i in range(5)]
         for j in range(15):
-            print(stages)
             try:
                 root = self.shadow_root[9]
                 if stages[0] is False:
