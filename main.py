@@ -26,16 +26,19 @@ elif Laboratory_CODE == "ПЦР":
     Laboratory_CODE = 2
 elif Laboratory_CODE == None:
     pass
-
-print(f"Лабораторный код: {Laboratory_CODE}\nЕсли 1 - ТМС\n2- ПЦР")
+if Laboratory_CODE == 1:
+    print("Выгрузка будет проводиться для ТМС")
+elif Laboratory_CODE == 2:
+    print("Выгрузка будет проводиться для ПЦР")
+#print(f"Лабораторный код: {Laboratory_CODE}\nЕсли 1 - ТМС\n2- ПЦР")
 
 if File is None:
     print("Не найден файл!")
     sys.exit()  # если файл не один или его нет - прекратить выполнение программы
 current_date = datetime.date.today()  # получаем сегодняшнюю дату
 formatted_date = current_date.strftime("%Y-%m-%d")  # формтируем год-месяц-день
-print(f"текущая дата: {formatted_date}")  # получаем сегодняшнюю дату - для записи
-print(File)
+#print(f"текущая дата: {formatted_date}")  # получаем сегодняшнюю дату - для записи
+#print(File)
 
 Patients_VIMIS = Patients.Patients_base()
 if unsuccess is not None:
@@ -136,8 +139,7 @@ def success_write(file_name, i):
 main_browser = Browser_works.On_vimis_work()
 main_browser.Dates = Patients_Base.date
 main_browser.Codes = Patients_Base.Code
-for i in range(len(main_browser.Dates)):
-    print(f"{i}: {main_browser.Dates[i]}\t{main_browser.Codes[i]}")
+
 main_browser.driver.get('https://vimis.egisz.rosminzdrav.ru/#patients_akineo.nns_list')
 if Laboratory_CODE == 1:
     main_browser.investigation = "BH"

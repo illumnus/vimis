@@ -47,8 +47,15 @@ class Patients_base:
             self.uniqueNumber.append(None)
 
         try:
-            self.date.append(date)
-        except:
+            date = date.split(" ")
+            date[1] = date[1].split(':')
+            if len(date[1][0]) == 1:
+                date[1][0] = "0" + date[1][0]
+            result = date[0] + " "
+            for i in date[1]:
+                result = result + i + ":"
+            self.date.append(result[:-1])
+        except Exception as e:
             self.date.append(None)
 
         try:
